@@ -74,11 +74,48 @@ async function DynamicSharedData(props: { requestId: string }) {
   );
 }
 
-export default async function CacheRemotePage() {
+async function DynamicContent() {
   await connection();
 
   const requestId = `req-${crypto.randomUUID()}`;
 
+  return (
+    <>
+      <div className="rounded-lg border border-green-200 bg-green-50 p-6 dark:border-green-900 dark:bg-green-950">
+        <h2 className="mb-3 text-lg font-semibold text-green-950 dark:text-green-50">
+          Characteristics
+        </h2>
+        <ul className="space-y-1 text-sm text-green-800 dark:text-green-200">
+          <li>• Cache scope: Global (shared by all users)</li>
+          <li>• Storage: Server-side cache handler</li>
+          <li>• Dynamic context: Yes (works after connection())</li>
+          <li>• Access to cookies/headers: No (but can pass as props)</li>
+          <li>• Revalidation: Configurable with cacheLife()</li>
+        </ul>
+      </div>
+      <DynamicSharedData requestId={requestId} />
+
+      <div className="rounded-lg border border-zinc-200 bg-zinc-100 p-6 dark:border-zinc-800 dark:bg-zinc-900">
+        <h3 className="mb-3 text-lg font-semibold text-zinc-950 dark:text-zinc-50">
+          Test Instructions
+        </h3>
+        <ol className="space-y-2 text-sm text-zinc-700 dark:text-zinc-300">
+          <li>1. Note the Request ID and timestamp above</li>
+          <li>2. Refresh this page multiple times</li>
+          <li>
+            3. Request ID changes (new request), but timestamp stays the same
+            (cached component)
+          </li>
+          <li>4. The cache key includes requestId prop</li>
+          <li>5. This demonstrates caching in a dynamic context</li>
+          <li>6. Cache is stored server-side and shared globally</li>
+        </ol>
+      </div>
+    </>
+  );
+}
+
+export default function CacheRemotePage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-zinc-950">
       <main className="flex w-full max-w-4xl flex-col gap-8 px-8 py-16">
@@ -99,38 +136,9 @@ export default async function CacheRemotePage() {
           </Link>
         </div>
 
-        <div className="rounded-lg border border-green-200 bg-green-50 p-6 dark:border-green-900 dark:bg-green-950">
-          <h2 className="mb-3 text-lg font-semibold text-green-950 dark:text-green-50">
-            Characteristics
-          </h2>
-          <ul className="space-y-1 text-sm text-green-800 dark:text-green-200">
-            <li>• Cache scope: Global (shared by all users)</li>
-            <li>• Storage: Server-side cache handler</li>
-            <li>• Dynamic context: Yes (works after connection())</li>
-            <li>• Access to cookies/headers: No (but can pass as props)</li>
-            <li>• Revalidation: Configurable with cacheLife()</li>
-          </ul>
-        </div>
         <Suspense fallback={<div>Loading...</div>}>
-          <DynamicSharedData requestId={requestId} />
+          <DynamicContent />
         </Suspense>
-
-        <div className="rounded-lg border border-zinc-200 bg-zinc-100 p-6 dark:border-zinc-800 dark:bg-zinc-900">
-          <h3 className="mb-3 text-lg font-semibold text-zinc-950 dark:text-zinc-50">
-            Test Instructions
-          </h3>
-          <ol className="space-y-2 text-sm text-zinc-700 dark:text-zinc-300">
-            <li>1. Note the Request ID and timestamp above</li>
-            <li>2. Refresh this page multiple times</li>
-            <li>
-              3. Request ID changes (new request), but timestamp stays the same
-              (cached component)
-            </li>
-            <li>4. The cache key includes requestId prop</li>
-            <li>5. This demonstrates caching in a dynamic context</li>
-            <li>6. Cache is stored server-side and shared globally</li>
-          </ol>
-        </div>
       </main>
     </div>
   );
